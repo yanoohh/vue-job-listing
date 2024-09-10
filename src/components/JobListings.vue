@@ -1,9 +1,10 @@
 <script setup>
 import jobData from '@/jobs.json'
 import JobListing from './JobListing.vue';
-import { ref, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 import { RouterLink } from 'vue-router'
 import axios from 'axios';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 defineProps({
     limit: {
@@ -15,14 +16,19 @@ defineProps({
     }
 })
 
-const jobs = ref([]);
+const state = reactive({
+    jobs: [],
+    isLoading: true
+})
 
 onMounted(async () => {
     try {
         const response = await axios.get('http://localhost:4000/jobs');
-        jobs.value = response.data;
+        state.jobs = response.data;
     } catch (error) {
         console.error("Error fetching jobs : " + error);
+    } finally {
+        state.isLoading = false;
     }
 });
 </script>
@@ -35,10 +41,15 @@ onMounted(async () => {
                 Browse Jobs
             </h2>
         </div>
+        
+        <!-- Show Loading when in loading state -->
+        <div v-if="state.isLoading" class=" text-center text-green-500 py-6">
+            <PulseLoader class="text-center"/>
+        </div>
 
-        <!-- Job Listing 1 -->
-         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <JobListing v-for="(job, index) in jobs.slice(0,limit || jobs.length)" :key="index" :job="job" />
+        <!-- Show Job Listing when loading-->
+         <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <JobListing v-for="(job, index) in state.jobs.slice(0,limit || state.jobs.length)" :key="index" :job="job" />
          </div>
 
          
