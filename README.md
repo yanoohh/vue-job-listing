@@ -6,3 +6,13 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 
 <!-- JSON SERVER -->
 npm i json-server
+
+<!-- Toasty -->
+npm i vue-toastification@next
+`@add these to the main.js `
+`// Toast`
+`import Toast from 'vue-toastification'`
+`import 'vue-toastification/dist/index.css'`
+`app.use(Toast)`
+
+
